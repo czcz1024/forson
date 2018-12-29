@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="http://cdn3.ttce.cn/ttce_plugins/jquery-1.10.2.min.js"></script>
+        <link href="https://cdn.bootcss.com/twitter-bootstrap/4.2.1/css/bootstrap.css" rel="stylesheet">
+        <style>
+            *{margin: 0;padding: 0}
+            span{width: 20px;display: inline-block;margin: 10px;text-align: center}
+            .blank input{width: 20px;text-align: center}
+            .err{ border:1px red solid}
+            .ti{margin:0 auto;text-align:center; font-size: 28px}
+            .ctrl{margin:0 auto;text-align:center}
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="ctrl">                
+                <select id="cnt">
+                        <option value="2">1式</option>
+                        <option value="3">2式</option>
+                </select>                
+                <select id="type">
+                    <option value="-1">随机</option>
+                    <option value="0">加法</option>
+                    <option value="1">减法</option>
+                </select>                
+                <button id="gen" onclick="gen()" type="button" class="btn btn-primary" >生成</button>                
+                <button id="check" onclick="check()" type="button" class="btn btn-warning" >检查</button>                
+            </div>            
+            <div id="show" class="ti"></div>
+        </div>
+        <script>            
+            function rnd(min,max){
+                    return Math.floor(Math.random() * (max - min + 1) + min)
+            }
+
+            function rndComputeType(){
+                return rnd(0,1);
+            }
+
+            function rndOneCompute(type,number1){                
+                var result={
+                    number1:0,
+                    number2:0,
+                    type:type,
+                    result:0
+                };
+                if(number1==undefined){
+                    if(type==0){
+                        result.number1=rnd(10,50);                        
+                    }
+                    else{
+                        result.number1=rnd(50,99);
+                    }
+                }
+                else{
+                    result.number1=number1;
+                }
+                if(type==0){
+                    result.number2=rnd(10,(90-result.number1));
+                }
+                else{
+                    result.number2=rnd(10,(result.number1-10));
+                }
+                
+                result.result=result.type==0?(result.number1+result.number2):(result.number1-result.number2)
+                return result;
+            }
+
+            function splitOneNumber(num){
+                var str=num.toString();
+                var result=[];
+                for(var i=0;i<str.length;i++){
+                    result.push(str[i]);
+                }
+                return result;
+            }
+            
+            function showNumber(num,type,blank){
+                var arr=splitOneNumber(num);
+                var typestr="";
+                if(type==0) typestr="+";
+                else if (type==1) typestr="-";
+                var result=['<span class="'+(typestr==''?'space':'type')+'">'+typestr+'</span>'];
+                for(var i=0;i<arr.length;i++){
+                    if(i==blank) result.push('<span class="blank"><input tag='+arr[i]+' /></span>');
+                    else result.push('<span class="num">'+arr[i]+'</span>');
+                }
+                return result.join("");
+            }            
+
+            function showOneCompute(x,y){
+                var blank=rnd(0,1);
+                var html1=showNumber(x.number1,-1,blank);
+                var html2=showNumber(x.number2,x.type,!blank);
+                var htmlresult=showNumber(x.result,-1,-1);
+                var div1=$("<div />");
+                var div2=$("<div />");
+                var divline=$("<div />");
+                var divResult=$("<div />");
+                div1.append(html1);
+                div2.append(html2);
+                divResult.append(htmlresult);
+                divline.append("----------------------");
+
+                $("#show").append(div1).append(div2).append(divline);
+
+                if(y){
+                    htmlresult=showNumber(x.result,-1,blank);
+                    divResult.empty().append(htmlresult);
+                    var yhtml2=showNumber(y.number2,y.type,!blank);
+                    var result2=showNumber(y.result,-1,-1);
+                    var divy=$("<div />");
+                    var divyr=$("<div />");
+                    var divline2=$("<div />");
+                    divline2.append("----------------------");
+                    divy.append(yhtml2);
+                    divyr.append(result2);
+
+                    $("#show").append(divResult).append(divy).append(divline2).append(divyr);
+                }
+                else{
+                    $("#show").append(divResult);
+                }
+            }
+
+            function gen(){
+                var pass=false;
+                while(!pass){
+                    $("#show").empty();
+                    var type=$("#type").val();
+                    var cnt=$("#cnt").val();
+                    if(type==-1)type=rndComputeType();
+                    if(cnt==2){                    
+                        var x=rndOneCompute(type);
+                        console.log(x.number1+(x.type==0?"+":"-")+x.number2+"="+x.result);
+                        showOneCompute(x);
+                        pass=x.number1>9 && x.number2>9 && x.result>9;
+                    }
+                    else if (cnt==3){
+                        var x=rndOneCompute(type);
+                        if(type==-1)type=rndComputeType();
+                        var y=rndOneCompute(type,x.result);
+                        showOneCompute(x,y);
+                        pass=x.number1>9 && x.number2>9 && x.result>9 && y.number2>9 && y.result>9;
+                        console.log(x.number1+(x.type==0?"+":"-")+x.number2+"="+x.result+(y.type==0?"+":"-")+y.number2+"="+y.result);
+                    }
+
+                }
+            }
+
+            function check(){
+                $("input").each(function(){
+                    if($(this).val()!=$(this).attr("tag")){
+                        $(this).addClass("err");
+                    }else{
+                        $(this).removeClass("err");
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
