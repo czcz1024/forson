@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
     <head>
-        <meta charset="utf-8">
-        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <script src="http://cdn3.ttce.cn/ttce_plugins/jquery-1.10.2.min.js"></script>
         <link href="https://cdn.bootcss.com/twitter-bootstrap/4.2.1/css/bootstrap.css" rel="stylesheet">
         <style>
-            *{margin: 0;padding: 0}
-            span{width: 20px;display: inline-block;margin: 10px;text-align: center}
-            .blank input{width: 20px;text-align: center}
-            .err{ border:1px red solid}
+            *{margin: 0;padding: 0;}
+            .container-fluid{
+                margin-top: 20px;
+            }
+            span{width: 30px;display: inline-block;margin: 10px;text-align: center}
+            .blank input{width: 30px; height:30px;text-align: center; border: 1px solid #111; font-size: 22px;}
+            .err{ border:1px red solid !important}
             .ti{margin:0 auto;text-align:center; font-size: 28px}
             .ctrl{margin:0 auto;text-align:center}
         </style>
@@ -85,7 +89,7 @@
                 else if (type==1) typestr="-";
                 var result=['<span class="'+(typestr==''?'space':'type')+'">'+typestr+'</span>'];
                 for(var i=0;i<arr.length;i++){
-                    if(i==blank) result.push('<span class="blank"><input tag='+arr[i]+' /></span>');
+                    if(i==blank) result.push('<span class="blank"><input type="number" tag='+arr[i]+' /></span>');
                     else result.push('<span class="num">'+arr[i]+'</span>');
                 }
                 return result.join("");
